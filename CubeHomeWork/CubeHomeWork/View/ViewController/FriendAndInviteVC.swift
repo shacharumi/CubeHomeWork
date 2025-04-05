@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
-    
+
     private let customNavBar = CustomInviteNavBar()
     private let viewModel = FriendAndInviteViewModel()
     private let contentTableView = FriendListTableView()
@@ -17,6 +17,9 @@ class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataS
     private var filteredFriendListData: [FriendListDetail] = []
     private var isSearching = false
     private var customNavBarHeightConstraint: Constraint?
+
+    private var tableViewTopConstraint: Constraint?
+    private var isSearchBarActive = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +30,8 @@ class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataS
         viewModel.fetchPersonData()
         viewModel.fetchFriendAndInviteData()
     }
+
+   
 
     private func setupUI() {
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -40,31 +45,74 @@ class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataS
             self.customNavBarHeightConstraint = make.height.equalTo(175).constraint
         }
 
-
         contentTableView.delegate = self
         contentTableView.dataSource = self
+        contentTableView.searchBar.delegate = self
 
         contentTableView.snp.makeConstraints { make in
-            make.top.equalTo(customNavBar.snp.bottom).offset(15)
+            self.tableViewTopConstraint = make.top.equalTo(customNavBar.snp.bottom).offset(15).constraint
             make.left.equalTo(view).offset(20)
             make.right.equalTo(view).offset(-20)
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+    }
 
-        contentTableView.searchBar.delegate = self
+   
+
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        isSearchBarActive = true
+        animateSearchBarActivation(active: true)
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        isSearchBarActive = false
+      
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        isSearching = false
+        filteredFriendListData = viewModel.friendList
+        contentTableView.reloadData()
+        searchBar.setShowsCancelButton(false, animated: true)
+
+        animateSearchBarActivation(active: false)
+        searchBar.endEditing(true)
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+
+    private func animateSearchBarActivation(active: Bool) {
+        if active {
+            let compactHeight: CGFloat = 60
+            let searchBarActiveTopOffset: CGFloat = -60
+
+            customNavBarHeightConstraint?.update(offset: compactHeight)
+            tableViewTopConstraint?.update(offset: searchBarActiveTopOffset)
+        } else {
+            let expandedHeight = customNavBar.calculatedExpandedHeight()
+            customNavBarHeightConstraint?.update(offset: expandedHeight)
+            tableViewTopConstraint?.update(offset: 15)
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     private func setupCategoryTabView() {
         customNavBar.addSubview(categoryTabView)
-
+        
         categoryTabView.snp.makeConstraints { make in
             make.left.equalTo(customNavBar).offset(32)
             make.right.equalTo(customNavBar).offset(-32)
-            make.bottom.equalTo(customNavBar).offset(-10)
-            make.height.equalTo(30)
+            make.bottom.equalTo(customNavBar).offset(0)
+            make.height.equalTo(50)
         }
-
-       
     }
 
     private func setupBindings() {
@@ -86,19 +134,23 @@ class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataS
             } else {
                 self.contentTableView.resetNoMoreData()
             }
+
             customNavBar.setupInviteBoxes(viewModel: viewModel)
             view.layoutIfNeeded()
             let initHeight = customNavBar.calculatedExpandedHeight()
-            customNavBar.snp.remakeConstraints() { make in
+            customNavBar.snp.remakeConstraints { make in
                 make.top.left.right.equalTo(self.view.safeAreaLayoutGuide)
-                
                 self.customNavBarHeightConstraint = make.height.equalTo(initHeight).constraint
             }
+            
+            categoryTabView.categories = [
+                ("好友", viewModel.inviteList.count),
+                ("聊天", 99)
+            ]
         }
-        
+
         customNavBar.inviteViewTapped = { [weak self] newHeight in
             self?.customNavBarHeightConstraint?.update(offset: newHeight)
-
             UIView.animate(withDuration: 0.3) {
                 self?.view.layoutIfNeeded()
             }
@@ -123,6 +175,11 @@ class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataS
         return viewModel.friendList.filter { $0.name.contains(keyword) }
     }
 
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        isSearching = !searchText.isEmpty
+        filteredFriendListData = applySearch()
+        contentTableView.reloadData()
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredFriendListData.count
@@ -158,21 +215,4 @@ class FriendAndInviteVC: UIViewController, UITableViewDelegate, UITableViewDataS
         cell.selectionStyle = .none
         return cell
     }
-
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        isSearching = !searchText.isEmpty
-        filteredFriendListData = applySearch()
-        contentTableView.reloadData()
-    }
-
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        isSearching = false
-        filteredFriendListData = viewModel.friendList
-        contentTableView.reloadData()
-    }
 }
-
-
-

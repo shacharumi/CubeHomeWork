@@ -97,7 +97,7 @@ class CustomInviteNavBar: UIView {
         personImage.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-30)
             make.width.equalTo(52)
-            make.height.equalTo(52)
+            make.height.equalTo(54)
             make.bottom.equalTo(idLabel)
         }
 
@@ -246,7 +246,7 @@ class CustomInviteNavBar: UIView {
 
         let firstView = inviteViews[0]
         let baseY = firstView.frame.origin.y
-        let collapsedHeight = baseY + CGFloat(inviteViews.count * 20) + 80
+        let collapsedHeight = baseY + CGFloat(inviteViews.count * 20) + 100
 
         UIView.animate(withDuration: 0.3, animations: {
             for i in 1..<self.inviteViews.count {
@@ -271,7 +271,7 @@ class CustomInviteNavBar: UIView {
             }
             if let last = self.inviteViews.last {
                 let bottomY = last.frame.maxY
-                self.inviteViewTapped?(bottomY + 50)
+                self.inviteViewTapped?(bottomY + 70)
             }
         }, completion: { _ in
             
@@ -281,6 +281,6 @@ class CustomInviteNavBar: UIView {
     
     func calculatedExpandedHeight() -> CGFloat {
         guard let last = inviteViews.last else { return 300 }
-        return last.frame.maxY + 50
+        return last.frame.maxY + 70
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import IQKeyboardManagerSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -14,35 +15,70 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
+
+        window = UIWindow(windowScene: windowScene)
         let tabBarController = UITabBarController()
         tabBarController.tabBar.clipsToBounds = false
         tabBarController.tabBar.tintColor = UIColor(red: 236/255, green: 0/255, blue: 140/255, alpha: 1)
-        let friendVC = NoFriendViewController()
-        let moneyVC = OnlyFriendListVC()
-        let recordVC = FriendAndInviteVC()
+
+        let placeholderVC = UIViewController()
+        placeholderVC.view.backgroundColor = .white
+        let placeholderNav = UINavigationController(rootViewController: placeholderVC)
+
+        let moneyVC = spaceController()
+        let recordVC = spaceController()
         let koVC = spaceController()
         let settingVC = spaceController()
-        
-        let friendNaVi = UINavigationController(rootViewController: friendVC)
+
         let moneyNaVi = UINavigationController(rootViewController: moneyVC)
         let koNaVi = UINavigationController(rootViewController: koVC)
         let recordNaVi = UINavigationController(rootViewController: recordVC)
         let settingNaVi = UINavigationController(rootViewController: settingVC)
-        
-        let image = UIImage(named: "koIcon")?.withRenderingMode(.alwaysOriginal)
-        friendNaVi.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "friendIcon"), selectedImage: UIImage(named: "friendIcon"))
+
         moneyNaVi.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "moneyIcon"), selectedImage: UIImage(named: "moneyIcon"))
+        placeholderNav.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "friendIcon"), selectedImage: UIImage(named: "friendIcon"))
         koNaVi.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "koIcon")?.withRenderingMode(.alwaysOriginal), selectedImage: UIImage(named: "koIcon")?.withRenderingMode(.alwaysOriginal))
         recordNaVi.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "recordIcon"), selectedImage: UIImage(named: "recordIcon"))
         settingNaVi.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "settingIcon"), selectedImage: UIImage(named: "settingIcon"))
-        
-        tabBarController.viewControllers = [moneyNaVi, friendNaVi, koNaVi, recordNaVi, settingNaVi]
+
+        tabBarController.viewControllers = [moneyNaVi, placeholderNav, koNaVi, recordNaVi, settingNaVi]
         tabBarController.selectedIndex = 1
-        window = UIWindow(windowScene: windowScene)
+
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.presentFriendVCSelection(on: tabBarController)
+        }
     }
+
+    private func presentFriendVCSelection(on tabBarController: UITabBarController) {
+        let alert = UIAlertController(title: "請選擇起始畫面", message: nil, preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "1. 無好友畫面", style: .default, handler: { _ in
+            let newVC = NoFriendViewController()
+            let nav = UINavigationController(rootViewController: newVC)
+            nav.tabBarItem = tabBarController.viewControllers?[1].tabBarItem
+            tabBarController.viewControllers?[1] = nav
+        }))
+
+        alert.addAction(UIAlertAction(title: "2. 只有好友列表", style: .default, handler: { _ in
+            let newVC = OnlyFriendListVC()
+            let nav = UINavigationController(rootViewController: newVC)
+            nav.tabBarItem = tabBarController.viewControllers?[1].tabBarItem
+            tabBarController.viewControllers?[1] = nav
+        }))
+
+        alert.addAction(UIAlertAction(title: "3. 好友列表含邀請", style: .default, handler: { _ in
+            let newVC = FriendAndInviteVC()
+            let nav = UINavigationController(rootViewController: newVC)
+            nav.tabBarItem = tabBarController.viewControllers?[1].tabBarItem
+            tabBarController.viewControllers?[1] = nav
+        }))
+
+        tabBarController.present(alert, animated: true)
+    }
+
     
     class spaceController: UIViewController {
         override func viewDidLoad() {

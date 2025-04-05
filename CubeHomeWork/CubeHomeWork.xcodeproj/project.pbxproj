@@ -32,6 +32,7 @@
 		C71F4CBD2DA13BF000028B72 /* CategoryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F4CBC2DA13BF000028B72 /* CategoryTabView.swift */; };
 		C71F4CBF2DA1411B00028B72 /* FriendListTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F4CBE2DA1411B00028B72 /* FriendListTableView.swift */; };
 		C71F4CC22DA1428900028B72 /* MJRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = C71F4CC12DA1428900028B72 /* MJRefresh */; };
+		C71F4CC82DA1841F00028B72 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C71F4CC72DA1841F00028B72 /* IQKeyboardManagerSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 			files = (
 				C71F4C962D9D5A8800028B72 /* SnapKit in Frameworks */,
 				C71F4CC22DA1428900028B72 /* MJRefresh in Frameworks */,
+				C71F4CC82DA1841F00028B72 /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,7 +143,6 @@
 				C71F4C6F2D9D2FBB00028B72 /* LaunchScreen.storyboard */,
 				C71F4C722D9D2FBB00028B72 /* Info.plist */,
 				C71F4C6A2D9D2FBA00028B72 /* CubeHomeWork.xcdatamodeld */,
-				C71F4CA72DA0DAE400028B72 /* FriendAndInvite */,
 			);
 			path = CubeHomeWork;
 			sourceTree = "<group>";
@@ -161,37 +162,6 @@
 				C71F4C872D9D2FBB00028B72 /* CubeHomeWorkUITestsLaunchTests.swift */,
 			);
 			path = CubeHomeWorkUITests;
-			sourceTree = "<group>";
-		};
-		C71F4CA72DA0DAE400028B72 /* FriendAndInvite */ = {
-			isa = PBXGroup;
-			children = (
-				C71F4CA82DA0DAF900028B72 /* Model */,
-				C71F4CAC2DA0E43800028B72 /* View */,
-				C71F4CAB2DA0E42000028B72 /* ViewModel */,
-			);
-			path = FriendAndInvite;
-			sourceTree = "<group>";
-		};
-		C71F4CA82DA0DAF900028B72 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		C71F4CAB2DA0E42000028B72 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		C71F4CAC2DA0E43800028B72 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		C71F4CAD2DA0E4C100028B72 /* Model */ = {
@@ -272,6 +242,7 @@
 			packageProductDependencies = (
 				C71F4C952D9D5A8800028B72 /* SnapKit */,
 				C71F4CC12DA1428900028B72 /* MJRefresh */,
+				C71F4CC72DA1841F00028B72 /* IQKeyboardManagerSwift */,
 			);
 			productName = CubeHomeWork;
 			productReference = C71F4C5E2D9D2FB900028B72 /* CubeHomeWork.app */;
@@ -348,6 +319,7 @@
 			packageReferences = (
 				C71F4C942D9D5A8800028B72 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				C71F4CC02DA1428900028B72 /* XCRemoteSwiftPackageReference "MJRefresh" */,
+				C71F4CC62DA1841F00028B72 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 			);
 			productRefGroup = C71F4C5F2D9D2FB900028B72 /* Products */;
 			projectDirPath = "";
@@ -590,6 +562,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7346552Z5J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CubeHomeWork/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -617,6 +590,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7346552Z5J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CubeHomeWork/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -767,6 +741,14 @@
 				minimumVersion = 3.7.9;
 			};
 		};
+		C71F4CC62DA1841F00028B72 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -779,6 +761,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C71F4CC02DA1428900028B72 /* XCRemoteSwiftPackageReference "MJRefresh" */;
 			productName = MJRefresh;
+		};
+		C71F4CC72DA1841F00028B72 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C71F4CC62DA1841F00028B72 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 

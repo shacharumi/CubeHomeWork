@@ -13,7 +13,11 @@ class CategoryTabView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     private var collectionView: UICollectionView!
     private let sliderView = UIView()
 
-    private let categories = ["好友", "聊天"]
+    var categories: [(title: String, badge: Int?)] = [
+        ("好友", 2),
+        ("聊天", 99)
+    ]
+
 
     var onCategorySelected: ((Int) -> Void)?
 
@@ -27,7 +31,7 @@ class CategoryTabView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         setupCollectionView()
     }
 
-    private func setupCollectionView() {
+    func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
@@ -38,7 +42,7 @@ class CategoryTabView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(NavBarCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-
+        
         sliderView.backgroundColor = .systemPink
         sliderView.layer.cornerRadius = 2
         sliderView.clipsToBounds = true
@@ -86,7 +90,8 @@ class CategoryTabView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         cell.label.font = indexPath.row == 0
             ? UIFont.systemFont(ofSize: 13, weight: .medium)
             : UIFont.systemFont(ofSize: 13, weight: .regular)
-        cell.label.text = categories[indexPath.row]
+        let item = categories[indexPath.row]
+            cell.configure(category: item.title, badgeCount: item.badge)
         return cell
     }
 
@@ -96,10 +101,11 @@ class CategoryTabView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let category = categories[indexPath.row]
+        let categoryTitle = categories[indexPath.row].title
         let font = UIFont.systemFont(ofSize: 13, weight: .medium)
         let attributes = [NSAttributedString.Key.font: font]
-        let width = (category as NSString).size(withAttributes: attributes).width + 20
-        return CGSize(width: max(width, 62), height: 30)
+        let textWidth = (categoryTitle as NSString).size(withAttributes: attributes).width + 20
+        return CGSize(width: max(textWidth, 62), height: 30)
     }
+
 }

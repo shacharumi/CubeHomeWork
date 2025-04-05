@@ -16,6 +16,10 @@ class OnlyFriendListVC: UIViewController, UITableViewDelegate, UITableViewDataSo
     private let categoryTabView = CategoryTabView()
     private var filteredFriendListData: [FriendListDetail] = []
     private var isSearching = false
+    private var isSearchBarActive = false
+
+    private var customNavBarHeightConstraint: Constraint?
+    private var tableViewTopConstraint: Constraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,6 +30,7 @@ class OnlyFriendListVC: UIViewController, UITableViewDelegate, UITableViewDataSo
         viewModel.fetchPersonData()
     }
 
+    
     private func setupUI() {
         navigationController?.setNavigationBarHidden(true, animated: false)
         view.backgroundColor = .white
@@ -35,33 +40,34 @@ class OnlyFriendListVC: UIViewController, UITableViewDelegate, UITableViewDataSo
 
         customNavBar.snp.makeConstraints { make in
             make.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(175)
+            self.customNavBarHeightConstraint = make.height.equalTo(175).constraint
         }
 
         contentTableView.delegate = self
         contentTableView.dataSource = self
+        contentTableView.searchBar.delegate = self
 
         contentTableView.snp.makeConstraints { make in
-            make.top.equalTo(customNavBar.snp.bottom).offset(15)
+            self.tableViewTopConstraint = make.top.equalTo(customNavBar.snp.bottom).offset(15).constraint
             make.left.equalTo(view).offset(20)
             make.right.equalTo(view).offset(-20)
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-
-        contentTableView.searchBar.delegate = self
     }
 
     private func setupCategoryTabView() {
+        
+        categoryTabView.categories = [
+            ("好友", 0),
+            ("聊天", 99)
+        ]
         customNavBar.addSubview(categoryTabView)
-
         categoryTabView.snp.makeConstraints { make in
             make.left.equalTo(customNavBar).offset(32)
             make.right.equalTo(customNavBar).offset(-32)
-            make.bottom.equalTo(customNavBar).offset(-10)
-            make.height.equalTo(30)
+            make.bottom.equalTo(customNavBar).offset(0)
+            make.height.equalTo(50)
         }
-
-       
     }
 
     private func setupBindings() {
@@ -107,6 +113,54 @@ class OnlyFriendListVC: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
 
 
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        isSearchBarActive = true
+        animateSearchBarActivation(active: true)
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        isSearchBarActive = false
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        isSearching = false
+        filteredFriendListData = viewModel.friendListData
+        contentTableView.reloadData()
+        searchBar.setShowsCancelButton(false, animated: true)
+        animateSearchBarActivation(active: false)
+        searchBar.endEditing(true)
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        isSearching = !searchText.isEmpty
+        filteredFriendListData = applySearch()
+        contentTableView.reloadData()
+    }
+
+    private func animateSearchBarActivation(active: Bool) {
+        if active {
+            let compactHeight: CGFloat = 60
+            let searchBarActiveTopOffset: CGFloat = -60
+
+            customNavBarHeightConstraint?.update(offset: compactHeight)
+            tableViewTopConstraint?.update(offset: searchBarActiveTopOffset)
+        } else {
+            customNavBarHeightConstraint?.update(offset: 175)
+            tableViewTopConstraint?.update(offset: 15)
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredFriendListData.count
     }
@@ -139,20 +193,8 @@ class OnlyFriendListVC: UIViewController, UITableViewDelegate, UITableViewDataSo
 
         cell.friendStarImageView.isHidden = friend.isTop == "0"
         cell.selectionStyle = .none
+        
+        
         return cell
-    }
-
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        isSearching = !searchText.isEmpty
-        filteredFriendListData = applySearch()
-        contentTableView.reloadData()
-    }
-
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        isSearching = false
-        filteredFriendListData = viewModel.friendListData
-        contentTableView.reloadData()
     }
 }
