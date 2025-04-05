@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icTabbarHomeOff.png",
+      "filename" : "btnFriendsAgree.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "icTabbarHomeOff@3x 1.png",
+      "filename" : "btnFriendsAgree@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "icTabbarHomeOff@3x.png",
+      "filename" : "btnFriendsAgree@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
